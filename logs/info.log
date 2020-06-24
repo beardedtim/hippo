@@ -1,0 +1,1 @@
+{"name":"NAME","level":{"number":20,"name":"info"},"timestamp":{"logged_at":"2020-06-24T15:03:42.543Z","called_at":"2020-06-24T15:03:42.543Z"},"something":{"logged":{"on":"each","request":true}},"res":{"status":200},"message":"Some other mesage"}

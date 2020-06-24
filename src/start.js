@@ -11,6 +11,18 @@ const log = createLog({
    */
   level: 10,
   /**
+   * Anything given to values will be logged on each request regardless
+   * of the input
+   */
+  values: {
+    something: {
+      logged: {
+        on: 'each',
+        request: true
+      }
+    }
+  },
+  /**
    * If the output should be colorized or not
    */
   colorized: true,

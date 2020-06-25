@@ -1,7 +1,7 @@
 {
   "name": "@beardedtim/hippo",
   "version": "0.0.1",
-  "description": "A no-dependency Multi-Page Application Framework",
+  "description": "A 0 dependency Multi-Page Application Framework",
   "main": "src/start.js",
   "repository": "git@github.com:beardedtim/hippo.git",
   "author": "Tim Roberts <timroberts@fastmail.org>",

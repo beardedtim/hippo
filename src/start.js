@@ -3,7 +3,6 @@ const path = require('path')
 const createLog = require('@/log')
 const Server = require('@/server')
 const middleware = require('@/middleware')
-const httpErrors = require('@/errors/http')
 const { create: createFileCache } = require('@/file-cache')
 const env = require('@/env')
 
@@ -63,6 +62,15 @@ const log = createLog({
       }
     }
 
+    if (message.err) {
+      message.err = {
+        message: message.err.message,
+        code: message.err.code,
+        status: message.err.status,
+        trace: message.err.stack
+      }
+    }
+
     return message
   }
 })
@@ -81,6 +89,7 @@ server
 
 
 process.on('uncaughtException', err => {
+  console.dir(err)
   server.stop(() => {
     log.fatal({ err }, 'UNCAUGHT EXCEPTION')
     process.exit(1)
@@ -88,6 +97,7 @@ process.on('uncaughtException', err => {
 })
 
 process.on('unhandledRejection', err => {
+  console.dir(err)
   server.stop(() => {
     log.fatal({ err }, 'UNHANDLED REJECTION')
     process.exit(1)

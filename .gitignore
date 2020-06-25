@@ -1,0 +1,4 @@
+public/
+logs/
+*.private.*
+.env

@@ -4,6 +4,11 @@ const createLog = require('@/log')
 const Server = require('@/server')
 const middleware = require('@/middleware')
 const httpErrors = require('@/errors/http')
+const { create: createFileCache } = require('@/file-cache')
+const env = require('@/env')
+
+const public_dir = path.resolve(__dirname, '..', 'public')
+const fileCache = createFileCache()
 
 const log = createLog({
   /**
@@ -62,7 +67,18 @@ const log = createLog({
   }
 })
 
-const server = new Server({ log })
+const server = new Server({ log, files: fileCache })
+
+server
+  .start(env.number('PORT'), () => log.info('Server started'))
+  .use(middleware.request_id())
+  .use(middleware.catch_errors())
+  .use(middleware.log_errors())
+  .use(middleware.log_request())
+  .use(middleware.request_time())
+  .use(middleware.security_headers())
+  .use(middleware.static_files({ public: public_dir }))
+
 
 process.on('uncaughtException', err => {
   server.stop(() => {
@@ -77,13 +93,3 @@ process.on('unhandledRejection', err => {
     process.exit(1)
   })
 })
-
-server
-  .start(5001, () => log.info('Server started'))
-  .use(middleware.request_id())
-  .use(middleware.catch_errors())
-  .use(middleware.log_errors())
-  .use(middleware.log_request())
-  .use(async (ctx, next) => {
-    throw new httpErrors.TeaPot()
-  })

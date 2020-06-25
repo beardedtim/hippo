@@ -5,6 +5,7 @@ const Server = require('@/server')
 const middleware = require('@/middleware')
 const { create: createFileCache } = require('@/file-cache')
 const env = require('@/env')
+const proc = require('@/process')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
 const fileCache = createFileCache()
@@ -22,7 +23,10 @@ const log = createLog({
    * Anything given to values will be logged on each request regardless
    * of the input
    */
-  values: {},
+  values: {
+    pid: proc.pid(),
+    platform: proc.platform()
+  },
   /**
    * If the output should be colorized or not
    */
@@ -78,7 +82,6 @@ const log = createLog({
 const server = new Server({ log, files: fileCache })
 
 server
-  .start(env.number('PORT'), () => log.info('Server started'))
   .use(middleware.request_id())
   .use(middleware.catch_errors())
   .use(middleware.log_errors())
@@ -86,20 +89,9 @@ server
   .use(middleware.request_time())
   .use(middleware.security_headers())
   .use(middleware.static_files({ public: public_dir }))
+  .start(env.number('PORT'), () => log.info('Server started'))
 
-
-process.on('uncaughtException', err => {
-  console.dir(err)
-  server.stop(() => {
-    log.fatal({ err }, 'UNCAUGHT EXCEPTION')
-    process.exit(1)
-  })
-})
-
-process.on('unhandledRejection', err => {
-  console.dir(err)
-  server.stop(() => {
-    log.fatal({ err }, 'UNHANDLED REJECTION')
-    process.exit(1)
-  })
-})
+proc.onUncaughtError(() => server.stop(() => {
+  log.fatal({ err })
+  process.exit(1)
+}))

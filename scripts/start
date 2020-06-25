@@ -1,0 +1,3 @@
+#!/bin/bash
+
+PORT=5000 OVERLORD_CONTACT="Tim Roberts <timroberts@fastmail.org>" node src/start.js

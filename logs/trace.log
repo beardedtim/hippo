@@ -1,1 +1,0 @@
-{"name":"NAME","level":{"number":10,"name":"trace"},"timestamp":{"logged_at":"2020-06-24T15:03:42.539Z","called_at":"2020-06-24T15:03:42.539Z"},"something":{"logged":{"on":"each","request":true}},"message":"Some message"}

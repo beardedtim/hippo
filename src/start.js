@@ -14,14 +14,7 @@ const log = createLog({
    * Anything given to values will be logged on each request regardless
    * of the input
    */
-  values: {
-    something: {
-      logged: {
-        on: 'each',
-        request: true
-      }
-    }
-  },
+  values: {},
   /**
    * If the output should be colorized or not
    */
@@ -56,18 +49,3 @@ const log = createLog({
     return message
   }
 })
-
-/**
- * We can log just a message
- */
-log.trace('Some message')
-/**
- * We can even log an object along with the message
- */
-log.info({ res: { status: 200 } }, 'Some other mesage')
-
-/**
- * If the object has a message and you give the function
- * a second value, the second value will override the first
- */
-log.warn({ message: 'This will not be the message' }, 'This will be the message')

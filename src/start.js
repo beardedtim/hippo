@@ -8,7 +8,6 @@ const proc = require('@/process')
 const errors = require('@/errors/http')
 
 const Server = require('@/server')
-const Router = require('@/router')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
 
@@ -21,7 +20,7 @@ const log = createLog({
   /**
    * The minimum log level. Can be int or string
    */
-  level: 10,
+  level: env.string('LOG_LEVEL', 'trace'),
   /**
    * Anything given to values will be logged on each request regardless
    * of the input
@@ -86,16 +85,6 @@ const fileCache = createFileCache({ log, max_length: 100 })
 
 const server = new Server({ log, files: fileCache, errors })
 
-const router = new Router()
-
-router.get('/bar/:name', async (ctx, next) => {
-  ctx.log.trace({ params: ctx.params }, 'I was called')
-  await next()
-  ctx.log.trace('aww yiss')
-}, ctx => {
-  ctx.status = 205
-})
-
 server
   .use(middleware.request_id())
   .use(middleware.catch_errors())
@@ -104,7 +93,6 @@ server
   .use(middleware.request_time())
   .use(middleware.security_headers())
   .use(middleware.not_found())
-  .use(router.route())
   .use(middleware.static_files({ public: public_dir }))
   .start(env.number('PORT'), () => log.info('Server started'))
 

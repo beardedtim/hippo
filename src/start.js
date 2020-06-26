@@ -96,7 +96,7 @@ server
   .use(middleware.static_files({ public: public_dir }))
   .start(env.number('PORT'), () => log.info('Server started'))
 
-proc.onUncaughtError(() => server.stop(() => {
+proc.onUncaughtError((err) => server.stop(() => {
   log.fatal({ err })
   process.exit(1)
 }))

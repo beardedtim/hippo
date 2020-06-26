@@ -1,12 +1,14 @@
 const path = require('path')
 
 const createLog = require('@/log')
-const Server = require('@/server')
 const middleware = require('@/middleware')
 const { create: createFileCache } = require('@/file-cache')
 const env = require('@/env')
 const proc = require('@/process')
 const errors = require('@/errors/http')
+
+const Server = require('@/server')
+const Router = require('@/router')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
 
@@ -84,6 +86,16 @@ const fileCache = createFileCache({ log, max_length: 100 })
 
 const server = new Server({ log, files: fileCache, errors })
 
+const router = new Router()
+
+router.get('/bar/:name', async (ctx, next) => {
+  ctx.log.trace({ params: ctx.params }, 'I was called')
+  await next()
+  ctx.log.trace('aww yiss')
+}, ctx => {
+  ctx.status = 205
+})
+
 server
   .use(middleware.request_id())
   .use(middleware.catch_errors())
@@ -91,6 +103,7 @@ server
   .use(middleware.log_request())
   .use(middleware.request_time())
   .use(middleware.security_headers())
+  .use(router.route())
   .use(middleware.static_files({ public: public_dir }))
   .start(env.number('PORT'), () => log.info('Server started'))
 

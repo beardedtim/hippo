@@ -103,6 +103,7 @@ server
   .use(middleware.log_request())
   .use(middleware.request_time())
   .use(middleware.security_headers())
+  .use(middleware.not_found())
   .use(router.route())
   .use(middleware.static_files({ public: public_dir }))
   .start(env.number('PORT'), () => log.info('Server started'))

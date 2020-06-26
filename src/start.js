@@ -6,9 +6,10 @@ const middleware = require('@/middleware')
 const { create: createFileCache } = require('@/file-cache')
 const env = require('@/env')
 const proc = require('@/process')
+const errors = require('@/errors/http')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
-const fileCache = createFileCache()
+
 
 const log = createLog({
   /**
@@ -79,7 +80,9 @@ const log = createLog({
   }
 })
 
-const server = new Server({ log, files: fileCache })
+const fileCache = createFileCache({ log, max_length: 100 })
+
+const server = new Server({ log, files: fileCache, errors })
 
 server
   .use(middleware.request_id())

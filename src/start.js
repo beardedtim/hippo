@@ -1,8 +1,10 @@
 const path = require('path')
 
-const createLog = require('@/log')
+const logger = require('@/log')
 const middleware = require('@/middleware')
+
 const { create: createFileCache } = require('@/file-cache')
+
 const env = require('@/env')
 const proc = require('@/process')
 const errors = require('@/errors/http')
@@ -11,8 +13,7 @@ const Server = require('@/server')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
 
-
-const log = createLog({
+const log = logger({
   /**
    * The name of the log. This will be attached to every log
    */
@@ -53,32 +54,7 @@ const log = createLog({
    * can only grab the values that we want off the request and not get
    * Circular Reference errors when trying to stringify for logging
    */
-  serializer: (message) => {
-    if (message.res) {
-      message.res = {
-        status: message.res.status
-      }
-    }
-
-    if (message.req) {
-      message.req = {
-        url: message.req.url,
-        method: message.req.method,
-        headers: message.req.headers
-      }
-    }
-
-    if (message.err) {
-      message.err = {
-        message: message.err.message,
-        code: message.err.code,
-        status: message.err.status,
-        trace: message.err.stack
-      }
-    }
-
-    return message
-  }
+  serializer: logger.serializer
 })
 
 const fileCache = createFileCache({ log, max_length: 100 })

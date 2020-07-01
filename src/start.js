@@ -12,7 +12,6 @@ const errors = require('@/errors/http')
 const Server = require('@/server')
 
 const public_dir = path.resolve(__dirname, '..', 'public')
-
 const log = logger({
   /**
    * The name of the log. This will be attached to every log

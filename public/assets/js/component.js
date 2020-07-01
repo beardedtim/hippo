@@ -33,6 +33,7 @@ class Component extends HTMLElement {
 
     window.requestAnimationFrame(this._render.bind(this))
   }
+
 }
 
 export default Component
